@@ -1,58 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="KE1.be CC Checker - All in One credit card checker tool" />
-    <meta name="keywords" content="ke1 checker, cc checker, credit card checker, bin checker, mass checker, live dead, bin, namso, namsogen, oshekhero, saksham shekher" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="KE1.be CC Checker - All in One credit card checker tool">
     <title>CC Checker - All in One</title>
-    <link rel="stylesheet" href="style.css" />
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.2/dist/sweetalert2.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.2/dist/sweetalert2.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet" />
-  </head>
-  <body>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
     <div class="container">
-      <header>
-        <h1>Bro BIN lagbe CC checker</h1>
-      </header>
-<div align="center">
-    <h3><a href="https://bbinl.github.io/cc-gen/">cc generator</a></h3>
-</div>
-      <main>
-        <section class="input-section">
-          <label for="numbers">Credit Card Numbers:</label>
-          <textarea id="numbers" rows="10" cols="50" placeholder="515462002115xxxx|01|2027|000"></textarea>
-        </section>
-        <section class="action-section">
-          <button id="check-btn" onclick="toggleButtons()">Start Checking</button>
-          <button id="stop-check-btn" disabled>Stop Checking</button>
-        </section>
-        <section class="output-section">
-          <div class="result-container">
-            <h2><span class="live">Live</span>: <span id="ali-count">0</span></h2>
-            <div id="ali-numbers"></div>
-            <button class="copy-btn" onclick="copyToClipboard('ali-numbers')">Copy</button>
-          </div>
-          <div class="result-container">
-            <h2><span class="dead">Dead</span>: <span id="muhammad-count">0</span></h2>
-            <div id="muhammad-numbers"></div>
-            <button class="copy-btn" onclick="copyToClipboard('muhammad-numbers')">Copy</button>
-          </div>
-          <div class="result-container">
-            <h2><span class="unknown">Unknown</span>: <span id="murad-count">0</span></h2>
-            <div id="murad-numbers"></div>
-            <button class="copy-btn" onclick="copyToClipboard('murad-numbers')">Copy</button>
-          </div>
-        </section>
-      </main>
-      <footer>
-        <a href="https://t.me/bro_bin_lagbe" target="_blank" rel="noopener noreferrer" class="telegram-link">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Telegram_2019_Logo.svg/1024px-Telegram_2019_Logo.svg.png" alt="Telegram Logo" height="20" width="20" /> @bro_bin_lagbe
-        </a>
-        <p>All copyright belong to uncoder.eu.org</p>
-      </footer>
+        <header>
+            <h1>Bro BIN lagbe CC Checker</h1>
+        </header>
+
+        <br>
+
+        <div class="link-section">
+            <a href="https://bbinl.github.io/cc-gen/" class="btn-link">
+                <i class="fa-solid fa-credit-card"></i> CC Generator
+            </a>
+        </div>
+
+        <br>
+
+        <main>
+            <section class="input-section">
+                <label for="numbers">Credit Card Numbers:</label>
+                <br><br>
+                <textarea id="numbers" rows="8" placeholder="515462002115xxxx|01|2027|000"></textarea>
+            </section>
+
+            <br>
+
+            <section class="action-section">
+                <button id="check-btn" onclick="toggleButtons()">
+                    <i class="fa-solid fa-play"></i> Start Checking
+                </button>
+                <br><br>
+                <button id="stop-check-btn" disabled>
+                    <i class="fa-solid fa-stop"></i> Stop Checking
+                </button>
+            </section>
+
+            <br>
+
+            <section class="output-section">
+                <div class="result-container live-box">
+                    <h2><span class="live">Live</span>: <span id="ali-count">0</span></h2>
+                    <br>
+                    <div id="ali-numbers"></div>
+                    <br>
+                    <button class="copy-btn" onclick="copyToClipboard('ali-numbers')">
+                        <i class="fa-solid fa-copy"></i> Copy
+                    </button>
+                </div>
+
+                <br>
+
+                <div class="result-container dead-box">
+                    <h2><span class="dead">Dead</span>: <span id="muhammad-count">0</span></h2>
+                    <br>
+                    <div id="muhammad-numbers"></div>
+                    <br>
+                    <button class="copy-btn" onclick="copyToClipboard('muhammad-numbers')">
+                        <i class="fa-solid fa-copy"></i> Copy
+                    </button>
+                </div>
+
+                <br>
+
+                <div class="result-container unknown-box">
+                    <h2><span class="unknown">Unknown</span>: <span id="murad-count">0</span></h2>
+                    <br>
+                    <div id="murad-numbers"></div>
+                    <br>
+                    <button class="copy-btn" onclick="copyToClipboard('murad-numbers')">
+                        <i class="fa-solid fa-copy"></i> Copy
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <br>
+
+        <footer>
+            <a href="https://t.me/bro_bin_lagbe" target="_blank" class="telegram-link">
+                <i class="fa-brands fa-telegram"></i> @bro_bin_lagbe
+            </a>
+            <br><br>
+            <p>All copyright belong to <a href="https://uncoder.eu.org" style="text-decoration:none; color:#ffcc00;">uncoder.eu.org</a></p>
+        </footer>
     </div>
+
     <script src="script.js"></script>
-  </body>
+</body>
 </html>
