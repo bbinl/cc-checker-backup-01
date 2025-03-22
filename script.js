@@ -67,11 +67,11 @@ checkBtn.addEventListener("click", function () {
     // 2. If valid, THEN categorize based on the random number
     const randomNumber = Math.random();
 if (randomNumber < 0.6) { 
-  aliList.push(${line});
+  aliList.push(`<span style='color:green; font-weight:bold;'></span> | ${line}`);
 } else if (randomNumber < 0.85) { 
-  muhammadList.push(${line});
+  muhammadList.push(`<span style='color:red; font-weight:bold;'></span> | ${line}`);
 } else {
-  muradList.push(${line});
+  muradList.push(`<span style='color:orange; font-weight:bold;'></span> | ${line}`);
   }
 }
 
