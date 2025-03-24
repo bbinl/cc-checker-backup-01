@@ -1,14 +1,10 @@
-/* Google Font */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-
+html
 {
-
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
 }
-
 body {
     background: #0d1117;
     color: #fff;
@@ -104,19 +100,6 @@ button:disabled {
 .live { color: #4CAF50; }
 .dead { color: #F44336; }
 .unknown { color: #FFC107; }
-
-/* Copy Button */
-.copy-btn {
-    background: linear-gradient(45deg, #007bff, #00d4ff);
-    color: white;
-    border-radius: 6px;
-    padding: 8px 14px;
-    font-size: 14px;
-}
-
-.copy-btn:hover {
-    transform: scale(1.1);
-}
 
 /* Footer */
 footer {
