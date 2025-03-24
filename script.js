@@ -68,11 +68,11 @@ checkBtn.addEventListener("click", function () {
     // 2. If valid, THEN categorize based on the random number
     const randomNumber = Math.random();
     if (randomNumber < 0.6) { 
-      aliList.push(`${cardNumber} | ${expiryMonth}/${expiryYear} | ${line.split("|")[3].trim()}\n`);
+      aliList.push(`${cardNumber}|${expiryMonth}|${expiryYear}|${line.split("|")[3].trim()}`);
     } else if (randomNumber < 0.85) { 
-      muhammadList.push(`${cardNumber} | ${expiryMonth}/${expiryYear} | ${line.split("|")[3].trim()}\n`);
+      muhammadList.push(`${cardNumber}|${expiryMonth}|${expiryYear}|${line.split("|")[3].trim()}`);
     } else {
-      muradList.push(`${cardNumber} | ${expiryMonth}/${expiryYear} | ${line.split("|")[3].trim()}\n`);
+      muradList.push(`${cardNumber}|${expiryMonth}|${expiryYear}|${line.split("|")[3].trim()}`);
     }
   }
 
