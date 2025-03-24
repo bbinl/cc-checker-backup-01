@@ -16,7 +16,7 @@ function isValidCreditCard(number) {
     return false;
   }
 
-let sum = 0;
+  let sum = 0;
   let alternate = false;
   for (let i = number.length - 1; i >= 0; i--) {
     let n = parseInt(number.substring(i, i + 1));
@@ -31,7 +31,6 @@ let sum = 0;
   }
   return (sum % 10) === 0;
 }
-
 
 checkBtn.addEventListener("click", function () {
   const numbers = document.getElementById("numbers").value;
@@ -55,6 +54,8 @@ checkBtn.addEventListener("click", function () {
   for (let i = 0; i < numberArray.length; i++) {
     const line = numberArray[i].trim();
     const cardNumber = line.split("|")[0].trim();
+    const expiryMonth = line.split("|")[1].trim(); 
+    const expiryYear = line.split("|")[2].trim();
 
     // CORRECTED LOGIC:
     // 1. Perform Luhn check FIRST
@@ -66,15 +67,14 @@ checkBtn.addEventListener("click", function () {
 
     // 2. If valid, THEN categorize based on the random number
     const randomNumber = Math.random();
-if (randomNumber < 0.6) { 
-  aliList.push(`<span style='color:green; font-weight:bold;'></span> | ${line}`);
-} else if (randomNumber < 0.85) { 
-  muhammadList.push(`<span style='color:red; font-weight:bold;'></span> | ${line}`);
-} else {
-  muradList.push(`<span style='color:orange; font-weight:bold;'></span> | ${line}`);
+    if (randomNumber < 0.6) { 
+      aliList.push(`${cardNumber} | ${expiryMonth}/${expiryYear} | ${line.split("|")[3].trim()}\n`);
+    } else if (randomNumber < 0.85) { 
+      muhammadList.push(`${cardNumber} | ${expiryMonth}/${expiryYear} | ${line.split("|")[3].trim()}\n`);
+    } else {
+      muradList.push(`${cardNumber} | ${expiryMonth}/${expiryYear} | ${line.split("|")[3].trim()}\n`);
+    }
   }
-}
-
 
   let aliCount = 0;
   let muhammadCount = 0;
@@ -86,17 +86,17 @@ if (randomNumber < 0.6) {
   updateNumbers = setInterval(() => {
     if (i < aliList.length) {
       aliCount++;
-      aliNumbersDiv.innerHTML += aliList[i] + "<br>";
+      aliNumbersDiv.innerText += aliList[i] + "\n";
       document.getElementById("ali-count").innerHTML = "Checked: " + aliCount;
     }
     if (i < muhammadList.length) {
       muhammadCount++;
-      muhammadNumbersDiv.innerHTML += muhammadList[i] + "<br>";
+      muhammadNumbersDiv.innerText += muhammadList[i] + "\n";
       document.getElementById("muhammad-count").innerHTML = "Checked: " + muhammadCount;
     }
     if (i < muradList.length) {
       muradCount++;
-      muradNumbersDiv.innerHTML += muradList[i] + "<br>";
+      muradNumbersDiv.innerText += muradList[i] + "\n";
       document.getElementById("murad-count").innerHTML = "Checked: " + muradCount;
     }
     i++;
@@ -113,26 +113,6 @@ if (randomNumber < 0.6) {
       document.getElementById("numbers").value = "";
     }
   }, Math.floor(Math.random() * (maxDelay - minDelay + 1) + minDelay)); 
-});
-
-// copy buttons
-const copyButtons = document.querySelectorAll(".copy-btn");
-copyButtons.forEach(function (button) {
-  button.addEventListener("click", function () {
-    const parentElement = button.parentElement;
-    const text = parentElement.innerHTML.replace(/<\/?[^>]+(>|$)/g, "").trim();
-    navigator.clipboard.writeText(text);
-    button.classList.add("copied");
-    const span = document.createElement("span");
-    span.innerHTML = "Copied!";
-    span.style.color = "green";
-    span.style.marginLeft = "5px";
-    button.parentNode.insertBefore(span, button.nextSibling);
-    setTimeout(function () {
-      button.classList.remove("copied");
-      span.remove();
-    }, 2000);
-  });
 });
 
 // stop check button
