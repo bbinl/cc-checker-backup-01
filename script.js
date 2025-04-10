@@ -1,142 +1,193 @@
-const checkBtn = document.getElementById("check-btn");
-const aliNumbersDiv = document.getElementById("ali-numbers");
-const muhammadNumbersDiv = document.getElementById("muhammad-numbers");
-const muradNumbersDiv = document.getElementById("murad-numbers");
-const stopCheckBtn = document.getElementById("stop-check-btn");
+// Global Variables
+let isChecking = false;
+let currentIndex = 0;
+let cardList = [];
+let checkInterval;
+const delay = 2000; // 2 second delay
 
-let updateNumbers;
+// DOM Elements
+const numbersTextarea = document.getElementById('numbers');
+const checkBtn = document.getElementById('check-btn');
+const stopCheckBtn = document.getElementById('stop-check-btn');
+const aliCount = document.getElementById('ali-count');
+const muhammadCount = document.getElementById('muhammad-count');
+const muradCount = document.getElementById('murad-count');
+const aliNumbers = document.getElementById('ali-numbers');
+const muhammadNumbers = document.getElementById('muhammad-numbers');
+const muradNumbers = document.getElementById('murad-numbers');
 
-// Function to perform Luhn check (standard and Amex)
-function isValidCreditCard(number) {
-  // Remove non-digit characters
-  number = number.replace(/\D/g, '');
-
-  // Check if it's potentially a valid credit card number
-  if (!/^(?:3[47][0-9]{13}|4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/.test(number)) {
-    return false;
-  }
-
-  let sum = 0;
-  let alternate = false;
-  for (let i = number.length - 1; i >= 0; i--) {
-    let n = parseInt(number.substring(i, i + 1));
-    if (alternate) {
-      n *= 2;
-      if (n > 9) {
-        n = (n % 10) + 1;
-      }
-    }
-    sum += n;
-    alternate = !alternate;
-  }
-  return (sum % 10) === 0;
-}
-
-checkBtn.addEventListener("click", function () {
-  const numbers = document.getElementById("numbers").value;
-  const numberArray = numbers.split("\n").filter((number) => {
-    return number.trim() !== "";
-  });
-
-  aliNumbersDiv.innerHTML = "";
-  muhammadNumbersDiv.innerHTML = "";
-  muradNumbersDiv.innerHTML = "";
-
-  checkBtn.classList.add("shake");
-  setTimeout(() => {
-    checkBtn.classList.remove("shake");
-  }, 500);
-
-  let aliList = [];
-  let muhammadList = [];
-  let muradList = [];
-
-  for (let i = 0; i < numberArray.length; i++) {
-    const line = numberArray[i].trim();
-    const cardNumber = line.split("|")[0].trim();
-    const expiryMonth = line.split("|")[1].trim(); 
-    const expiryYear = line.split("|")[2].trim();
-
-    // CORRECTED LOGIC:
-    // 1. Perform Luhn check FIRST
-    if (!isValidCreditCard(cardNumber)) {
-      muradList.push(`<span style='color:grey; font-weight:bold;'>Invalid (Luhn Check)</span> | ${line} /OshekherO`);
-      // If invalid, continue to the next card
-      continue; 
-    }
-
-    // 2. If valid, THEN categorize based on the random number
-    const randomNumber = Math.random();
-    if (randomNumber < 0.6) { 
-      aliList.push(`${cardNumber}|${expiryMonth}|${expiryYear}|${line.split("|")[3].trim()}`);
-    } else if (randomNumber < 0.85) { 
-      muhammadList.push(`${cardNumber}|${expiryMonth}|${expiryYear}|${line.split("|")[3].trim()}`);
-    } else {
-      muradList.push(`${cardNumber}|${expiryMonth}|${expiryYear}|${line.split("|")[3].trim()}`);
-    }
-  }
-
-  let aliCount = 0;
-  let muhammadCount = 0;
-  let muradCount = 0;
-  const minDelay = 2000;
-  const maxDelay = 5000;
-  let i = 0;
-
-  updateNumbers = setInterval(() => {
-    if (i < aliList.length) {
-      aliCount++;
-      aliNumbersDiv.innerText += aliList[i] + "\n";
-      document.getElementById("ali-count").innerHTML = "Checked: " + aliCount;
-    }
-    if (i < muhammadList.length) {
-      muhammadCount++;
-      muhammadNumbersDiv.innerText += muhammadList[i] + "\n";
-      document.getElementById("muhammad-count").innerHTML = "Checked: " + muhammadCount;
-    }
-    if (i < muradList.length) {
-      muradCount++;
-      muradNumbersDiv.innerText += muradList[i] + "\n";
-      document.getElementById("murad-count").innerHTML = "Checked: " + muradCount;
-    }
-    i++;
-    if (i >= aliList.length && i >= muhammadList.length && i >= muradList.length) {
-      clearInterval(updateNumbers);
-      Swal.fire({
-        title: "Checking completed!",
-        text: "All CC have been checked successfully.",
-        icon: "success",
-        confirmButtonText: "Okay",
-      });
-      checkBtn.disabled = false;
-      stopCheckBtn.disabled = true;
-      document.getElementById("numbers").value = "";
-    }
-  }, Math.floor(Math.random() * (maxDelay - minDelay + 1) + minDelay)); 
-});
-
-// stop check button
-stopCheckBtn.addEventListener("click", function () {
-  clearInterval(updateNumbers);
-  Swal.fire({
-    title: "Checking stopped!",
-    text: "The checking process has been stopped.",
-    icon: "error",
-    confirmButtonText: "Okay",
-  });
-  stopCheckBtn.disabled = true;
-  checkBtn.disabled = false;
-  stopCheckBtn.classList.add("shake");
-  setTimeout(() => {
-    stopCheckBtn.classList.remove("shake");
-  }, 500);
-});
-
-// toggle buttons
+// Button Toggle Function
 function toggleButtons() {
-  const checkBtn = document.getElementById("check-btn");
-  const stopCheckBtn = document.getElementById("stop-check-btn");
-  checkBtn.disabled = true;
-  stopCheckBtn.disabled = false;
-  stopCheckBtn.style.backgroundColor = "green";
+    if (isChecking) {
+        pauseChecking();
+    } else {
+        startChecking();
+    }
 }
+
+// Start Checking Function
+function startChecking() {
+    const input = numbersTextarea.value.trim();
+    if (!input) {
+        Swal.fire('Error!', 'Please enter credit card numbers', 'error');
+        return;
+    }
+
+    cardList = input.split('\n').filter(line => line.trim() !== '');
+    if (cardList.length === 0) {
+        Swal.fire('Error!', 'No valid cards found', 'error');
+        return;
+    }
+
+    isChecking = true;
+    currentIndex = 0;
+    checkBtn.innerHTML = '<i class="fa-solid fa-pause"></i> Pause Checking';
+    stopCheckBtn.disabled = false;
+
+    // Process first card immediately
+    processNextCard();
+}
+
+// Pause Checking Function
+function pauseChecking() {
+    isChecking = false;
+    clearInterval(checkInterval);
+    checkBtn.innerHTML = '<i class="fa-solid fa-play"></i> Resume Checking';
+}
+
+// Stop Checking Function
+function stopChecking() {
+    isChecking = false;
+    clearInterval(checkInterval);
+    checkBtn.innerHTML = '<i class="fa-solid fa-play"></i> Start Checking';
+    stopCheckBtn.disabled = true;
+}
+
+// Process Next Card Function
+function processNextCard() {
+    if (!isChecking || currentIndex >= cardList.length) {
+        if (currentIndex >= cardList.length) {
+            stopChecking();
+            Swal.fire('Completed!', 'All cards have been checked', 'success');
+        }
+        return;
+    }
+
+    const cardData = cardList[currentIndex];
+    const parts = cardData.split('|').map(part => part.trim());
+    
+    // Default values
+    let cardNumber = parts[0] || 'N/A';
+    let expiryMonth = parts.length > 1 ? parts[1] : 'N/A';
+    let expiryYear = parts.length > 2 ? parts[2] : 'N/A';
+    let cvc = parts.length > 3 ? parts[3] : 'N/A';
+    
+    // Validation logic
+    let status = '';
+    let resultType = 'unknown';
+
+    // Format check
+    if (parts.length !== 4) {
+        status = 'Invalid Format';
+        resultType = 'unknown';
+    } 
+    // Card number check
+    else if (!/^\d+$/.test(parts[0])) {
+        status = 'Invalid Card Number';
+        resultType = 'unknown';
+    }
+    // Expiry date check
+    else if (!validateExpiry(parts[1], parts[2])) {
+        status = 'Invalid Expiry';
+        resultType = 'unknown';
+    }
+    // CVC check
+    else if (!validateCVC(parts[3], parts[0])) {
+        status = 'Invalid CVC';
+        resultType = 'unknown';
+    }
+    // Luhn Algorithm check
+    else if (!validateCred(numberToArray(parts[0]))) {
+        status = 'Invalid Card (Luhn)';
+        resultType = 'dead';
+    }
+    // Everything valid
+    else {
+        status = 'LIVE';
+        resultType = 'live';
+    }
+
+    // Create result element with requested format
+    const cardElement = document.createElement('div');
+    cardElement.className = 'card-result ' + resultType;
+    cardElement.textContent = `${cardNumber}|${expiryMonth}|${expiryYear}|${cvc}`;
+
+    // Update results
+    switch (resultType) {
+        case 'live':
+            aliNumbers.appendChild(cardElement);
+            aliCount.textContent = parseInt(aliCount.textContent) + 1;
+            break;
+        case 'dead':
+            muhammadNumbers.appendChild(cardElement);
+            muhammadCount.textContent = parseInt(muhammadCount.textContent) + 1;
+            break;
+        default:
+            muradNumbers.appendChild(cardElement);
+            muradCount.textContent = parseInt(muradCount.textContent) + 1;
+    }
+
+    currentIndex++;
+    
+    // Set interval for next card
+    if (isChecking && currentIndex < cardList.length) {
+        checkInterval = setTimeout(processNextCard, delay);
+    } else if (currentIndex >= cardList.length) {
+        stopChecking();
+        Swal.fire('Completed!', 'All cards have been checked', 'success');
+    }
+}
+
+// Expiry Date Validation
+function validateExpiry(mm, yyyy) {
+    if (!/^\d{2}$/.test(mm) || !/^\d{4}$/.test(yyyy)) return false;
+    
+    const month = parseInt(mm, 10);
+    const year = parseInt(yyyy, 10);
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1;
+
+    if (month < 1 || month > 12) return false;
+    if (year < currentYear || (year === currentYear && month < currentMonth)) return false;
+    return true;
+}
+
+// CVC Validation
+function validateCVC(cvc, ccNumber) {
+    if (!/^\d{3,4}$/.test(cvc)) return false;
+    const firstDigit = ccNumber[0];
+    return (firstDigit === '3') ? cvc.length === 4 : cvc.length === 3;
+}
+
+// Luhn Algorithm
+function validateCred(numArr) {
+    let total = 0;
+    for (let i = numArr.length - 1; i >= 0; i--) {
+        let currValue = numArr[i];
+        if ((numArr.length - 1 - i) % 2 === 1) {
+            currValue *= 2;
+            if (currValue > 9) currValue -= 9;
+        }
+        total += currValue;
+    }
+    return total % 10 === 0;
+}
+
+// Convert number to array
+function numberToArray(number) {
+    return number.toString().split('').map(Number);
+}
+
+// Stop button event listener
+stopCheckBtn.addEventListener('click', stopChecking);
